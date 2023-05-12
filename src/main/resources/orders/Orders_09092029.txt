@@ -1,0 +1,2 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+1,Peter,TX,4.45,Laminate,156,1.75,2.10,273.00,327.60,24.0240,624.6240

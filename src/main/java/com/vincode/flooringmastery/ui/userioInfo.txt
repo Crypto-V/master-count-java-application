@@ -1,0 +1,1 @@
+The UserIO class (along with the view component) will handle all console IO for the user.

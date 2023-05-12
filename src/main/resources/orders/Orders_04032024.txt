@@ -1,0 +1,2 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+1,George,TX,4.45,Carpet,145,2.25,2.10,326.25,304.50,25.2300,655.9800

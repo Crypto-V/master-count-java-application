@@ -1,0 +1,2 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+1,Kate,TX,4.45,Wood,165,5.15,4.75,849.75,783.75,65.3400,1698.8400

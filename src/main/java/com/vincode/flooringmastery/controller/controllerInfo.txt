@@ -1,0 +1,1 @@
+The controller package contains classes that orchestrate the program.

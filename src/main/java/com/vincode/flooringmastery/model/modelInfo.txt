@@ -1,0 +1,37 @@
+The model package may only contain classes that have data members (properties).
+
+All orders are stored within an Orders folder. A new order file is created for each sales day. The file name is guaranteed to be unique for that day because the date is part of the file name. When creating new order files the file name should be in this format: Orders_MMDDYYYY.txt.
+
+With this format, the order file for August 21st, 2025 would be named Orders_08212025.txt.
+
+The order file should contain a header row. Data rows will contain the following fields and should be in this order:
+
+OrderNumber – Integer
+CustomerName – String
+State – String
+TaxRate – BigDecimal
+ProductType – String
+Area – BigDecimal
+CostPerSquareFoot – BigDecimal
+LaborCostPerSquareFoot – BigDecimal
+MaterialCost – BigDecimal
+LaborCost – BigDecimal
+Tax – BigDecimal
+Total – BigDecimal
+Here is a sample line from an orders file:
+
+1,Ada Lovelace,CA,25.00,Tile,249.00,3.50,4.15,871.50,1033.35,476.21,2381.06
+
+Orders_06012013.txt is a sample file which is included in the sample download above.
+
+Some of the order fields are calculations:
+
+MaterialCost = (Area * CostPerSquareFoot)
+
+LaborCost = (Area * LaborCostPerSquareFoot)
+
+Tax = (MaterialCost + LaborCost) * (TaxRate/100)
+
+Tax rates are stored as whole numbers
+Total = (MaterialCost + LaborCost + Tax)
+

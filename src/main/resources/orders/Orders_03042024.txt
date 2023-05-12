@@ -1,0 +1,2 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+1,vasile,TX,4.45,Carpet,130,2.25,2.10,292.50,273.00,22.6200,588.1200
