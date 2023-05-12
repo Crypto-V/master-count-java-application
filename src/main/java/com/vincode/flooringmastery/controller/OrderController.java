@@ -14,8 +14,6 @@ import java.util.List;
 
 
 public class OrderController {
-    private final OrderValidationService validationService;
-    private final OrderEstimationService estimationService;
     private final OrderService orderService;
     private final ConsoleOrderView view;
 
@@ -58,16 +56,16 @@ public class OrderController {
     private void displayOrdersByDate() {
         view.displayAllOrdersSectionBanner();
         String date = view.getUserRequestedDate();
+
         try {
             List<Order> orders = orderService.getOrdersByDate(date);
             view.displayAllOrders(orders);
         } catch (NoOrdersFoundException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
-    private void addOrder() throws InvalidOrderException, IOException {
+    private void addOrder()  {
         view.addOrderSectionBanner();
         String date = view.getOrderDate();
         String name = view.getCustomerName();
@@ -75,7 +73,6 @@ public class OrderController {
         BigDecimal area = view.getArea();
         String productType = view.getProductType();
 
-        //Checking if no exception thrown
         try {
             Order order = orderService.createOrder(date, name, state, area, productType);
             simulateLoadingProcess();
@@ -84,8 +81,8 @@ public class OrderController {
             simulateLoadingProcess();
             view.displayPreOrderBanner(date, order);
             boolean confirmed = view.getUserConfirmation();
+
             if (confirmed) {
-                //Removing dashes from the date string so when added will be in the format of mmddyyyy.
                 date = date.replaceAll("-", "");
                 orderService.addOrder(date, order);
                 System.out.println("Order Confirmed!!");
@@ -97,42 +94,52 @@ public class OrderController {
             System.out.println("Invalid: " + e.getMessage());
             System.out.println("!------Let's try again------!");
             addOrder();
-            // If the exception was caught, ask the user to enter the order details again.
         }
     }
 
     private void editOrder() throws InvalidOrderException {
         view.displayEditSectionBanner();
+
+        // Reading values for extracting the object
         int orderNumber = view.getOrderNumber();
         String date = view.getOrderDate().replaceAll("-", "");
-        Order tempOrder = orderService.getOrder(date, orderNumber);
-        view.displayOrderFound(tempOrder);
-        Order modifiedOrder = view.modifyOrderInfo(tempOrder);
 
-        // Validate the order
         try {
-            orderService.validateOrder(modifiedOrder);
-        } catch (InvalidOrderException e) {
-            System.out.println("Invalid: " + e.getMessage());
-        }
+            // Extracting the object
+            Order tempOrder = orderService.getOrder(date, orderNumber);
+            view.displayOrderFound(tempOrder);
 
-        // Reestimate the order
-        Order reestimatedOrder = orderService.reestimateOrder(modifiedOrder);
-        boolean confirmed = view.getUserConfirmation();
-        if (confirmed) {
-            simulateLoadingProcess();
-            Order finalOrder = orderService.updateOrder(date, reestimatedOrder);
-            simulateLoadingProcess();
-            System.out.println("Order Updated!!");
-            view.displayOrderFound(finalOrder);
-        } else {
+            // Reading the new values
+            String name = view.readCustomerName(tempOrder.getCustomerName());
+            String state = view.readState(tempOrder.getState());
+            BigDecimal area = view.readArea(tempOrder.getArea());
+            String productType = view.readProductType(tempOrder.getProductType());
+
+            // Validate the order
+            orderService.validateOrder(name, state, area, productType);
+
+            boolean confirmed = view.getUserConfirmation();
+            if (confirmed) {
+                simulateLoadingProcess();
+                // Update existing order and estimate
+                try {
+                    Order reestimatedOrder = orderService.updateOrder(date, orderNumber, name, state, area, productType);
+                    simulateLoadingProcess();
+                    System.out.println("Order Updated!!");
+                    view.displayOrderFound(reestimatedOrder);
+                } catch (NoOrdersFoundException e) {
+                    System.out.println("No order found: " + e.getMessage());
+                } catch (InvalidOrderException e) {
+                    System.out.println("Invalid order: " + e.getMessage());
+                }
+            } else {
+                view.printMenuAndGetSelection();
+            }
+        } catch (NoOrdersFoundException | InvalidOrderException e) {
+            System.out.println("Invalid: " + e.getMessage());
             view.printMenuAndGetSelection();
         }
     }
-
-
-
-
 
     //This method will simulate the loading process to look more real.
     private void simulateLoadingProcess() {

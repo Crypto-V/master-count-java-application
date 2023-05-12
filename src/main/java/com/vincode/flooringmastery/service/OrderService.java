@@ -3,7 +3,6 @@ package com.vincode.flooringmastery.service;
 import com.vincode.flooringmastery.dao.OrderDao;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
-
 import com.vincode.flooringmastery.model.Order;
 
 import java.math.BigDecimal;
@@ -47,32 +46,17 @@ public class OrderService {
         return estimationService.calculateEstimates(name, state, area, productType);
     }
 
-
-    public Order updateOrder(String date, Order order) throws InvalidOrderException {
-        return orderDao.updateOrder(date,order);
+    public Order updateOrder(String date, int orderNumber, String name, String state, BigDecimal area, String productType) throws InvalidOrderException {
+        Order newOrder = orderDao.updateOrder(date, orderNumber, name, state, area, productType);
+        return estimationService.calculateEstimates(newOrder.getCustomerName(), newOrder.getState(), newOrder.getArea(), newOrder.getProductType());
     }
 
-    public void validateOrder(Order order) throws InvalidOrderException {
-            validationService.validateName(order.getCustomerName());
-            validationService.validateState(order.getState());
-            validationService.validateArea(order.getArea());
-            validationService.validateProductType(order.getProductType());
-    }
-
-    public Order reestimateOrder(Order order) {
-        return estimationService.calculateEstimates(order.getCustomerName(), order.getState(), order.getArea(), order.getProductType());
+    public void validateOrder(String name, String state, BigDecimal area, String productType) throws InvalidOrderException {
+        validationService.validateName(name);
+        validationService.validateState(state);
+        validationService.validateArea(area);
+        validationService.validateProductType(productType);
     }
 
 
 }
-
-
-//    public void editOrder(Order order) throws InvalidOrderException {
-//        Order validatedOrder = orderValidationService.validateOrder(order);
-//        orderEstimationService.calculateEstimates(validatedOrder);
-//        orderDao.updateOrder(validatedOrder);
-//    }
-//
-//    public void removeOrder(Order order) {
-//        orderDao.removeOrder(order);
-//

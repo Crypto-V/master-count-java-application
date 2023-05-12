@@ -5,6 +5,7 @@ import com.vincode.flooringmastery.dao.TaxRateDao;
 import com.vincode.flooringmastery.exceptions.ProductTypeNotFoundException;
 import com.vincode.flooringmastery.exceptions.StateNotFoundException;
 import com.vincode.flooringmastery.model.Order;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -42,7 +43,7 @@ public class OrderEstimationService {
             order.setTotal(total);
 
             return order;
-        } catch (StateNotFoundException  | ProductTypeNotFoundException e) {
+        } catch (StateNotFoundException | ProductTypeNotFoundException e) {
             System.out.println(e.getMessage());
             return null;
         }

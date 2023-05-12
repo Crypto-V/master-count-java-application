@@ -110,31 +110,38 @@ public class ConsoleOrderView {
         return io.readInt("Enter the order number: ");
     }
 
-    public Order modifyOrderInfo(Order order) {
-        String customerName = io.readString("Enter customer name (" + order.getCustomerName() + ") :").toUpperCase();
-        String state = io.readString("Please enter the state abbreviation (" + order.getState() + ") : ").toUpperCase();
-        String area = io.readString("Please enter the area you want to calculate (" + order.getArea() + ") : ");
+    public String readCustomerName(String currentName) {
+        String customerName = io.readString("Enter customer name (" + currentName + "): ").toUpperCase();
+        // Perform validation logic here if needed
+        if(!customerName.isEmpty()) return customerName;
+        return currentName;
+    }
+
+    public String readState(String currentState) {
+        String state = io.readString("Please enter the state abbreviation (" + currentState + "): ").toUpperCase();
+        // Perform validation logic here if needed
+        if(!state.isEmpty()) return state;
+        return currentState;
+    }
+
+    public BigDecimal readArea(BigDecimal currentArea) {
+        String areaStr = io.readString("Please enter the area you want to calculate (" + currentArea + "): ");
+        // Perform validation logic here to ensure a valid BigDecimal value
+        if(!areaStr.isEmpty()) return new BigDecimal(areaStr);
+        return currentArea;
+    }
+
+    public String readProductType(String currentProductType) {
         io.print("<<Material Type>>");
         io.print("Carpet");
         io.print("Laminate");
         io.print("Tile");
         io.print("Wood");
-        String productType = io.readString("Select the product type (" + order.getProductType() + ") : ").toUpperCase();
+        String productType = io.readString("Select the product type (" + currentProductType + "): ").toUpperCase();
+        // Perform validation logic here if needed
 
-        if (!customerName.isEmpty()) {
-            order.setCustomerName(customerName);
-        }
-        if (!state.isEmpty()) {
-            order.setState(state);
-        }
-        if (!area.isEmpty()) {
-            order.setArea(new BigDecimal(area));
-        }
-        if (!productType.isEmpty()) {
-            order.setProductType(productType);
-        }
-        return order;
-
+        if(!productType.isEmpty()) return productType;
+        return currentProductType;
     }
 
     public void displayOrderFound(Order order) {
@@ -145,4 +152,5 @@ public class ConsoleOrderView {
     }
 
     //Delete section
+
 }

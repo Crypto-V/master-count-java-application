@@ -72,39 +72,38 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Order updateOrder(String date, Order order) {
-        System.out.println("Updating order: " + order.toString());
-
+    public Order updateOrder(
+            String date,
+            int orderNumber,
+            String name,
+            String state,
+            BigDecimal area,
+            String productType) throws NoOrdersFoundException, InvalidOrderException {
         OrderStamp os = register.get(date);
         if (os != null) {
             Order existingOrder = os.getOrderDetail();
-            if (Objects.equals(existingOrder.getOrderNumber(), order.getOrderNumber())) {
-                System.out.println("Existing order found: " + existingOrder.toString());
+            if (existingOrder.getOrderNumber() == orderNumber) {
+                existingOrder.setCustomerName(name);
+                existingOrder.setState(state);
+                existingOrder.setArea(area);
+                existingOrder.setProductType(productType);
 
-                // Update order details
-                existingOrder.setCustomerName(order.getCustomerName());
-                existingOrder.setState(order.getState());
-                existingOrder.setProductType(order.getProductType());
-                existingOrder.setArea(order.getArea());
-
-                // Update the associated file with the current order
                 String fileName = "Orders_" + date + ".txt";
                 String ORDER_DIR = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders\\";
                 Path filePath = Paths.get(ORDER_DIR + "/" + fileName);
 
                 try {
                     writeOrderToFile(existingOrder, filePath);
-                    System.out.println("Order file updated successfully!");
                     return existingOrder;
                 } catch (InvalidOrderException e) {
                     e.printStackTrace();
-                    return null;
+                    throw new InvalidOrderException("Failed to update the order.");
                 }
             }
         }
-        System.out.println("Existing order not found!");
-        return null;
+        throw new NoOrdersFoundException("Order with this date and order number combination was not found!");
     }
+
 
     @Override
     public Order removeTheOrder(String date, Long orderNumber) {

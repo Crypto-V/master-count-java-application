@@ -20,15 +20,14 @@ public class OrderValidationService {
         this.taxDao = taxDao;
     }
 
-    //validating the business requirement for the order date to be in the future.
-    public String validateDate(String date) throws InvalidOrderException {
+    // Validating the business requirement for the order date to be in the future.
+    public void validateDate(String date) throws InvalidOrderException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         LocalDate orderLocalDate = LocalDate.parse(date, formatter);
         LocalDate today = LocalDate.now();
         if (orderLocalDate.isBefore(today)) {
             throw new InvalidOrderException("Order date must be in the future: " + date);
         }
-        return date.replaceAll("-","");
     }
 
     public void validateName(String name) throws InvalidOrderException {
@@ -58,5 +57,4 @@ public class OrderValidationService {
             throw new ProductTypeNotFoundException("Product type not found. It might be available in the future!");
         }
     }
-
 }
