@@ -101,31 +101,37 @@ public class OrderController {
         }
     }
 
-    private void editOrder()  {
-        try {
-            view.displayEditSectionBanner();
-            int orderNumber = view.getOrderNumber();
-            String date = view.getOrderDate().replaceAll("-", "");
-            Order order = orderService.getOrder(date, orderNumber);
-            view.displayOrderFound(order);
-            Order tempOrder = view.modifyOrderInfo(order);
-            boolean confirmed = view.getUserConfirmation();
-            if (confirmed) {
-                simulateLoadingProcess();
-                //Validate the date and estimate the order.
-                order = orderService.updateOrder(date, tempOrder);
-                simulateLoadingProcess();
-                System.out.println("Order Updated!!");
-                view.displayOrderFound(order);
-            } else {
-                view.printMenuAndGetSelection();
-            }
+    private void editOrder() throws InvalidOrderException {
+        view.displayEditSectionBanner();
+        int orderNumber = view.getOrderNumber();
+        String date = view.getOrderDate().replaceAll("-", "");
+        Order tempOrder = orderService.getOrder(date, orderNumber);
+        view.displayOrderFound(tempOrder);
+        Order modifiedOrder = view.modifyOrderInfo(tempOrder);
 
-        } catch (NoOrdersFoundException | InvalidOrderException e) {
+        // Validate the order
+        try {
+            orderService.validateOrder(modifiedOrder);
+        } catch (InvalidOrderException e) {
             System.out.println("Invalid: " + e.getMessage());
-            System.out.println("!------Let's try again------!");
+        }
+
+        // Reestimate the order
+        Order reestimatedOrder = orderService.reestimateOrder(modifiedOrder);
+        boolean confirmed = view.getUserConfirmation();
+        if (confirmed) {
+            simulateLoadingProcess();
+            Order finalOrder = orderService.updateOrder(date, reestimatedOrder);
+            simulateLoadingProcess();
+            System.out.println("Order Updated!!");
+            view.displayOrderFound(finalOrder);
+        } else {
+            view.printMenuAndGetSelection();
         }
     }
+
+
+
 
 
     //This method will simulate the loading process to look more real.

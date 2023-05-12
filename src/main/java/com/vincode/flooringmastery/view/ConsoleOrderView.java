@@ -138,7 +138,10 @@ public class ConsoleOrderView {
     }
 
     public void displayOrderFound(Order order) {
-        io.print(order.toString());
+        if(order != null){
+            io.print(order.toString());
+        }
+
     }
 
     //Delete section

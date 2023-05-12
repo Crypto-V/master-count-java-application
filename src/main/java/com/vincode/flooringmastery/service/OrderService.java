@@ -6,7 +6,6 @@ import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
 
 import com.vincode.flooringmastery.model.Order;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class OrderService {
         return tempOrders;
     }
 
-    public void addOrder(String date, Order order) throws InvalidOrderException, IOException {
+    public void addOrder(String date, Order order) throws InvalidOrderException {
         orderDao.addOrder(date, order);
     }
 
@@ -48,19 +47,20 @@ public class OrderService {
         return estimationService.calculateEstimates(name, state, area, productType);
     }
 
+
     public Order updateOrder(String date, Order order) throws InvalidOrderException {
-        // Validate order details
-        validationService.validateName(order.getCustomerName());
-        validationService.validateState(order.getState());
-        validationService.validateArea(order.getArea());
-        validationService.validateProductType(order.getProductType());
+        return orderDao.updateOrder(date,order);
+    }
 
-        // Reestimate order
-        Order updatedOrder = estimationService.calculateEstimates(order.getCustomerName(), order.getState(), order.getArea(), order.getProductType());
+    public void validateOrder(Order order) throws InvalidOrderException {
+            validationService.validateName(order.getCustomerName());
+            validationService.validateState(order.getState());
+            validationService.validateArea(order.getArea());
+            validationService.validateProductType(order.getProductType());
+    }
 
-        // Update order
-
-        return orderDao.updateOrder(date, updatedOrder);
+    public Order reestimateOrder(Order order) {
+        return estimationService.calculateEstimates(order.getCustomerName(), order.getState(), order.getArea(), order.getProductType());
     }
 
 
