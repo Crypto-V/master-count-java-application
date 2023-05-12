@@ -30,7 +30,7 @@ public class ProductDaoImpl implements ProductDao {
                 List<BigDecimal> costs = new ArrayList<>();
                 costs.add(new BigDecimal(values[1]));
                 costs.add(new BigDecimal(values[2]));
-                productMap.put(values[0], costs);
+                productMap.put(values[0].toUpperCase(), costs);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -39,13 +39,12 @@ public class ProductDaoImpl implements ProductDao {
 
     @Override
     public List<BigDecimal> getProductCosts(String productType) {
+        List<BigDecimal> tempList = productMap.get(productType.toUpperCase());
+        if (tempList == null || tempList.isEmpty()) {
+            throw new ProductTypeNotFoundException("No orders found for product type: " + productType);
+        }
 
-            List<BigDecimal> tempList = productMap.get(productType);
-
-            if(tempList.isEmpty()){
-                throw new ProductTypeNotFoundException("No orders found for date: " + productType);
-            }
-            return tempList;
+        return tempList;
     }
 
 

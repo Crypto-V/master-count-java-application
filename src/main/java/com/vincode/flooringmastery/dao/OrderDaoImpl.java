@@ -1,11 +1,9 @@
 package com.vincode.flooringmastery.dao;
 
-import com.vincode.flooringmastery.FlooringMasteryApplication;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
 import com.vincode.flooringmastery.model.Order;
 import com.vincode.flooringmastery.model.OrderStamp;
-
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.DirectoryStream;
@@ -16,7 +14,6 @@ import java.util.*;
 
 
 public class OrderDaoImpl implements OrderDao {
-    private final String ORDERS_PATH = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders";
     private final Map<String, OrderStamp> register;
     private int latestOrderNumber = 0;
 
@@ -37,7 +34,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Order addOrder(String date, Order order) throws InvalidOrderException {
+    public Order addOrder(String date, Order order) throws  IOException {
 
         //Creating the file with the name following the conventions and assigning the desired path.
         String fileName = "Orders_" + date + ".txt";
@@ -64,9 +61,43 @@ public class OrderDaoImpl implements OrderDao {
             Order order = os.getOrderDetail();
             if (order.getOrderNumber() == orderNumber) {
                 return order;
+            } else {
+                throw new NoOrdersFoundException("Order with this number: " + orderNumber + " was not found!");
+            }
+        } else {
+            throw new NoOrdersFoundException("Order with this date: " + date + " was not found!");
+        }
+    }
+
+
+    @Override
+    public Order updateOrder(String date, Order order) throws InvalidOrderException {
+        OrderStamp os = register.get(date);
+        if (os != null) {
+            Order existingOrder = os.getOrderDetail();
+            if (existingOrder.getOrderNumber().equals(order.getOrderNumber())) {
+                // Update order details
+                existingOrder.setCustomerName(order.getCustomerName());
+                existingOrder.setState(order.getState());
+                existingOrder.setProductType(order.getProductType());
+                existingOrder.setArea(order.getArea());
+
+                // Update associated file
+                String fileName = "Orders_" + date + ".txt";
+                String ORDER_DIR = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders\\";
+                Path filePath = Paths.get(ORDER_DIR + "/" + fileName);
+
+                try {
+                    // Rewrite the file
+                    writeOrderToFile(existingOrder, filePath);
+                    return existingOrder;
+                } catch (IOException e) {
+                    // Handle file operation exception
+                    throw new InvalidOrderException("Failed to update order file.");
+                }
             }
         }
-        return null;
+        throw new InvalidOrderException("Something went wrong! :(");
     }
 
 
@@ -86,31 +117,21 @@ public class OrderDaoImpl implements OrderDao {
         register.put(stamp.getDate(), stamp);
     }
 
-    private void writeOrderToFile(Order order, Path filePath) throws InvalidOrderException {
+    private void writeOrderToFile(Order order, Path filePath) throws IOException {
+        // Format the order details into a string
+        String orderData = String.format("%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                order.getOrderNumber(), order.getCustomerName(), order.getState(), order.getTaxRate(), order.getProductType(),
+                order.getArea(), order.getCostPerSquareFoot(), order.getLaborCostPerSquareFoot(), order.getMaterialCost(),
+                order.getLaborCost(), order.getTax(), order.getTotal());
 
-        try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(filePath))) {
-            writer.println("OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total");
-            writer.println(
-                    order.getOrderNumber()+ "," +
-                    order.getCustomerName() + "," +
-                            order.getState() + "," +
-                            order.getTaxRate() + "," +
-                            order.getProductType() + "," +
-                            order.getArea() + "," +
-                            order.getCostPerSquareFoot() + "," +
-                            order.getLaborCostPerSquareFoot() + "," +
-                            order.getMaterialCost() + "," +
-                            order.getLaborCost() + "," +
-                            order.getTax() + "," +
-                            order.getTotal());
-        } catch (IOException e) {
-            throw new InvalidOrderException("File not found! Can't write order to the file!");
-        }
+        // Write the order data to the file
+        Files.write(filePath, Collections.singletonList(orderData));
     }
 
     //When the instance will be created will automatically call this method to populate the register with the
     // reference to the orders.
     private void readFolderFiles() {
+        String ORDERS_PATH = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders";
         Path folderPath = Paths.get(ORDERS_PATH);
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folderPath)) {
             for (Path filePath : directoryStream) {

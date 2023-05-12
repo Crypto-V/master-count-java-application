@@ -30,7 +30,7 @@ public class TaxRateDaoImpl implements TaxRateDao {
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
                 String[] values = line.split(",");
-                stateAndRate.put(values[0], new BigDecimal(values[2]));
+                stateAndRate.put(values[0].toUpperCase(), new BigDecimal(values[2]));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -39,7 +39,7 @@ public class TaxRateDaoImpl implements TaxRateDao {
 
     @Override
     public BigDecimal getRate(String stateAbbreviation) {
-        BigDecimal tempRate = stateAndRate.get(stateAbbreviation);
+        BigDecimal tempRate = stateAndRate.get(stateAbbreviation.toUpperCase());
         if(tempRate == null){
             throw new StateNotFoundException("State not found");
         }

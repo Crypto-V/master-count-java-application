@@ -4,7 +4,6 @@ import com.vincode.flooringmastery.model.Order;
 import com.vincode.flooringmastery.ui.UserIO;
 
 import java.math.BigDecimal;
-import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class ConsoleOrderView {
 
     //get user information
     public String getCustomerName() {
-        return io.readString("Please enter your name");
+        return io.readString("Please enter your name").toUpperCase();
     }
 
     public String getState() {
@@ -56,7 +55,7 @@ public class ConsoleOrderView {
         io.print("Tile");
         io.print("Wood");
 
-        return io.readString("Please select from the above choices.");
+        return io.readString("Please select from the above choices.").toUpperCase();
 
     }
 
@@ -103,33 +102,44 @@ public class ConsoleOrderView {
 
 
     //Edit order section
+    public void displayEditSectionBanner() {
+        System.out.println(" << Edit Order >> ");
+    }
+
     public int getOrderNumber() {
         return io.readInt("Enter the order number: ");
     }
 
-    public void displayIfOrderExists(Order order) {
-        if (order != null) {
-            modifyOrder(order);
+    public Order modifyOrderInfo(Order order) {
+        String customerName = io.readString("Enter customer name (" + order.getCustomerName() + ") :").toUpperCase();
+        String state = io.readString("Please enter the state abbreviation (" + order.getState() + ") : ").toUpperCase();
+        String area = io.readString("Please enter the area you want to calculate (" + order.getArea() + ") : ");
+        io.print("<<Material Type>>");
+        io.print("Carpet");
+        io.print("Laminate");
+        io.print("Tile");
+        io.print("Wood");
+        String productType = io.readString("Select the product type (" + order.getProductType() + ") : ").toUpperCase();
 
-        } else {
-            io.print("This order doesnt exist. ");
+        if (!customerName.isEmpty()) {
+            order.setCustomerName(customerName);
         }
-    }
-
-    public Order modifyOrder(Order order) {
-        String customerName = io.readString("Enter customer name (" + order.getCustomerName() + ") :");
-        String state = io.readString("Please enter the state abbreviation (" + order.getState() + ") : ");
-        BigDecimal area = new BigDecimal(io.readString("Please enter the area you want to calculate (" + order.getArea() + ") : "));
-        String productType = io.readString("Enter the product type (" + order.getProductType() + ") : ");
-        productType = getProductType();
-
-        order.setCustomerName(customerName);
-        order.setState(state);
-        order.setArea(area);
-        order.setProductType(productType);
-
+        if (!state.isEmpty()) {
+            order.setState(state);
+        }
+        if (!area.isEmpty()) {
+            order.setArea(new BigDecimal(area));
+        }
+        if (!productType.isEmpty()) {
+            order.setProductType(productType);
+        }
         return order;
+
     }
 
+    public void displayOrderFound(Order order) {
+        io.print(order.toString());
+    }
 
+    //Delete section
 }

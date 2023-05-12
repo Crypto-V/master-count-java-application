@@ -8,9 +8,8 @@ import com.vincode.flooringmastery.service.OrderService;
 import com.vincode.flooringmastery.service.OrderValidationService;
 import com.vincode.flooringmastery.view.ConsoleOrderView;
 
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 
@@ -27,7 +26,7 @@ public class OrderController {
         this.view = view;
     }
 
-    public void run() {
+    public void run() throws IOException {
         boolean keepGoing = true;
         int menuSelection = 0;
 
@@ -39,7 +38,7 @@ public class OrderController {
                 switch (menuSelection) {
                     case 1 -> displayOrdersByDate();
                     case 2 -> addOrder();
-                    case 3 -> System.out.println("Edit an Order");
+                    case 3 -> editOrder();
                     case 4 -> System.out.println("Remove an order");
                     case 5 -> keepGoing = false;
                     default -> System.out.println("Default message");
@@ -68,7 +67,7 @@ public class OrderController {
 
     }
 
-    private void addOrder() throws InvalidOrderException {
+    private void addOrder() throws InvalidOrderException, IOException {
         view.addOrderSectionBanner();
         String date = view.getOrderDate();
         String name = view.getCustomerName();
@@ -78,7 +77,7 @@ public class OrderController {
 
         //Checking if no exception thrown
         try {
-            Order order = orderService.createOrder(date,name, state, area, productType);
+            Order order = orderService.createOrder(date, name, state, area, productType);
             simulateLoadingProcess();
             System.out.println("Order Valid!!\n");
             System.out.println("Estimating the cost");
@@ -86,7 +85,9 @@ public class OrderController {
             view.displayPreOrderBanner(date, order);
             boolean confirmed = view.getUserConfirmation();
             if (confirmed) {
-                orderService.addOrder(date,order);
+                //Removing dashes from the date string so when added will be in the format of mmddyyyy.
+                date = date.replaceAll("-", "");
+                orderService.addOrder(date, order);
                 System.out.println("Order Confirmed!!");
                 view.displayAddedOrder(order);
             } else {
@@ -100,10 +101,31 @@ public class OrderController {
         }
     }
 
+    private void editOrder()  {
+        try {
+            view.displayEditSectionBanner();
+            int orderNumber = view.getOrderNumber();
+            String date = view.getOrderDate().replaceAll("-", "");
+            Order order = orderService.getOrder(date, orderNumber);
+            view.displayOrderFound(order);
+            Order tempOrder = view.modifyOrderInfo(order);
+            boolean confirmed = view.getUserConfirmation();
+            if (confirmed) {
+                simulateLoadingProcess();
+                //Validate the date and estimate the order.
+                order = orderService.updateOrder(date, tempOrder);
+                simulateLoadingProcess();
+                System.out.println("Order Updated!!");
+                view.displayOrderFound(order);
+            } else {
+                view.printMenuAndGetSelection();
+            }
 
-
-
-
+        } catch (NoOrdersFoundException | InvalidOrderException e) {
+            System.out.println("Invalid: " + e.getMessage());
+            System.out.println("!------Let's try again------!");
+        }
+    }
 
 
     //This method will simulate the loading process to look more real.
@@ -121,39 +143,6 @@ public class OrderController {
     }
 
 
-    private void editOrder() {
-        String date = view.getOrderDate();
-        int orderNumber = view.getOrderNumber();
-        Order order = new Order();
-
-        try {
-            order = orderService.getOrder(date, orderNumber);
-            view.displayIfOrderExists(order);
-
-
-        } catch (InvalidOrderException e) {
-            //TODO
-        }
-//
-//
-//
-
-//            if (updatedOrder != null) {
-//                io.printOrder(updatedOrder);
-//                boolean confirmation = io.readYesNo("Would you like to update this order?");
-//                if (confirmation) {
-//                    orderService.updateOrder(updatedOrder);
-//                    io.print("Order updated.");
-//                } else {
-//                    io.print("Order not updated.");
-//                }
-//            } else {
-//                io.print("Order could not be validated.");
-//            }
-//        } else {
-//            io.print("Order not found.");
-//        }
-    }
 //
 //    private void removeOrder() {
 //        LocalDate date = io.readDate("Enter the order date");

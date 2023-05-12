@@ -9,9 +9,11 @@ import com.vincode.flooringmastery.ui.UserIO;
 import com.vincode.flooringmastery.ui.UserIOConsoleImpl;
 import com.vincode.flooringmastery.view.ConsoleOrderView;
 
+import java.io.IOException;
+
 public class FlooringMasteryApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		UserIO io = new UserIOConsoleImpl();
 		ProductDao productDao = new ProductDaoImpl();

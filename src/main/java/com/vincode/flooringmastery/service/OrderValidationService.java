@@ -5,7 +5,6 @@ import com.vincode.flooringmastery.dao.TaxRateDao;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.ProductTypeNotFoundException;
 import com.vincode.flooringmastery.exceptions.StateNotFoundException;
-import com.vincode.flooringmastery.model.Order;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
