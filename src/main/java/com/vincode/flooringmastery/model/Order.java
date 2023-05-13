@@ -9,7 +9,6 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@ToString
 public class Order {
 
     //Order number will be incremented in the constructor
@@ -32,40 +31,37 @@ public class Order {
         this.orderNumber = nextNumber;
     }
 
-    //This constructor will be initialized when user will provide the initial data.
-    public Order( String state, BigDecimal area, String productType) {
-        this.state = state;
-        this.area = area;
-        this.productType = productType;
-        this.orderNumber = nextNumber;
-//        this.orderDate = orderDate;
+    @Override
+    public String toString() {
+        return "\nOrder Details:\n" +
+                "Order Number: " + orderNumber + "\n" +
+                "Customer Name: " + customerName + "\n" +
+                "State: " + state + "\n" +
+                "Tax Rate: " + taxRate + "%\n" +
+                "Product Type: " + productType + "\n" +
+                "Area: " + area + " sq.Ft\n" +
+                "Cost Per Square Foot: $" + costPerSquareFoot + "\n" +
+                "Labor Cost Per Square Foot: $" + laborCostPerSquareFoot + "\n" +
+                "Material Cost: $" + materialCost + "\n" +
+                "Labor Cost: $" + laborCost + "\n" +
+                "Tax: $" + tax + "\n" +
+                "Total: $" + total;
     }
 
-    public Order(
-            String customerName,
-            String state,
-            BigDecimal taxRate,
-            String productType,
-            BigDecimal area,
-            BigDecimal costPerSquareFoot,
-            BigDecimal laborCostPerSquareFoot,
-            BigDecimal materialCost,
-            BigDecimal laborCost,
-            BigDecimal tax,
-            BigDecimal total) {
-        this.customerName = customerName;
-        this.state = state;
-        this.taxRate = taxRate;
-        this.productType = productType;
-        this.area = area;
-        this.costPerSquareFoot = costPerSquareFoot;
-        this.laborCostPerSquareFoot = laborCostPerSquareFoot;
-        this.materialCost = materialCost;
-        this.laborCost = laborCost;
-        this.tax = tax;
-        this.total = total;
-        this.orderNumber = nextNumber;
-        nextNumber++;
+    public String toExportString() {
+        return orderNumber + "," +
+                customerName + "," +
+                state + "," +
+                taxRate + "," +
+                productType + "," +
+                area + "," +
+                costPerSquareFoot + "," +
+                laborCostPerSquareFoot + "," +
+                materialCost + "," +
+                laborCost + "," +
+                tax + "," +
+                total;
     }
+
 
 }

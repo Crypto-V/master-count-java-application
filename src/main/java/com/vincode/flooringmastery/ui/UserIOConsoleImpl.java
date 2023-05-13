@@ -30,7 +30,7 @@ public class UserIOConsoleImpl implements UserIO {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddyyyy");
                 return LocalDate.parse(input, formatter);
             } catch (DateTimeParseException ex) {
-                System.out.println("Invalid date format, please enter the date in MM-dd-yyyy or MMddyyyy format.");
+                System.out.println("Invalid date, user the format MMddyyyy or MM-dd-yyyy! ");
                 return readDate(msgPrompt);
             }
         }

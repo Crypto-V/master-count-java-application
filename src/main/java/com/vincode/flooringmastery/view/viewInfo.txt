@@ -1,1 +1,0 @@
-The view package contains classes that interact with the user.

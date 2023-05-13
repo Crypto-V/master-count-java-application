@@ -1,4 +1,4 @@
-package com.vincode.flooringmastery.dao;
+package com.vincode.flooringmastery.dao.interfaces;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -1,5 +1,6 @@
 package com.vincode.flooringmastery.dao;
 
+import com.vincode.flooringmastery.dao.interfaces.ProductDao;
 import com.vincode.flooringmastery.exceptions.ProductTypeNotFoundException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,10 +10,10 @@ import java.util.*;
 public class ProductDaoImpl implements ProductDao {
 
     Map<String, List<BigDecimal>> productMap = new HashMap<>();
-    private final String PATH = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\data\\Products.txt";
 
     public ProductDaoImpl() {
         //Method will be called automatically which will load the data in the map.
+        String PATH = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\data\\Products.txt";
         readFile(PATH);
     }
 

@@ -1,8 +1,7 @@
 package com.vincode.flooringmastery.dao;
 
-
+import com.vincode.flooringmastery.dao.interfaces.TaxRateDao;
 import com.vincode.flooringmastery.exceptions.StateNotFoundException;
-
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -11,11 +10,11 @@ import java.util.Scanner;
 
 public class TaxRateDaoImpl implements TaxRateDao {
 
-    Map<String,BigDecimal> stateAndRate = new HashMap<>();
-    private final String PATH = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\data\\Taxes.txt";
+    Map<String, BigDecimal> stateAndRate = new HashMap<>();
 
     public TaxRateDaoImpl() {
         //Method will be called automatically which will load the data in the map.
+        String PATH = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\data\\Taxes.txt";
         readFile(PATH);
     }
 
@@ -40,7 +39,7 @@ public class TaxRateDaoImpl implements TaxRateDao {
     @Override
     public BigDecimal getRate(String stateAbbreviation) {
         BigDecimal tempRate = stateAndRate.get(stateAbbreviation.toUpperCase());
-        if(tempRate == null){
+        if (tempRate == null) {
             throw new StateNotFoundException("State not found");
         }
         return tempRate;

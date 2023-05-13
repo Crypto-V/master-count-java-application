@@ -1,2 +1,2 @@
 OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
-4,VASILE,CA,25.00,LAMINATE,678,1.75,2.10,1186.50,1423.80,652.5750,3262.8750
+4,GEORGE,TX,25.00,WOOD,100,1.75,2.10,1186.50,1423.80,652.5750,3262.8750

@@ -1,19 +1,25 @@
 package com.vincode.flooringmastery.service;
 
-import com.vincode.flooringmastery.dao.OrderDao;
+import com.vincode.flooringmastery.dao.interfaces.OrderDao;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
 import com.vincode.flooringmastery.model.Order;
+import com.vincode.flooringmastery.service.interfaces.EstimationManagementService;
+import com.vincode.flooringmastery.service.interfaces.OrderManagementService;
+import com.vincode.flooringmastery.service.interfaces.ValidationManagementService;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class OrderService {
+public class OrderService implements OrderManagementService {
     private final OrderDao orderDao;
-    private final OrderValidationService validationService;
-    private final OrderEstimationService estimationService;
+    private final ValidationManagementService validationService;
+    private final EstimationManagementService estimationService;
 
-    public OrderService(OrderDao orderDao, OrderValidationService orderValidationService, OrderEstimationService orderEstimationService) {
+    public OrderService(OrderDao orderDao, ValidationManagementService orderValidationService, EstimationManagementService orderEstimationService) {
         this.orderDao = orderDao;
         this.validationService = orderValidationService;
         this.estimationService = orderEstimationService;
@@ -58,5 +64,13 @@ public class OrderService {
         validationService.validateProductType(productType);
     }
 
+    public Order removeOrder(String date, int orderNumber) throws NoOrdersFoundException, InvalidOrderException {
+        return orderDao.removeOrder(date, orderNumber);
+    }
 
+    public void exportAll(LocalDate now) throws IOException, InvalidOrderException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddyyyy");
+        String formattedDate = now.format(formatter);
+        orderDao.export(formattedDate);
+    }
 }

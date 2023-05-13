@@ -1,1 +1,0 @@
-The dao package contains classes that are responsible for persisting data.

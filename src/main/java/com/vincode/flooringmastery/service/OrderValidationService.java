@@ -1,17 +1,18 @@
 package com.vincode.flooringmastery.service;
 
-import com.vincode.flooringmastery.dao.ProductDao;
-import com.vincode.flooringmastery.dao.TaxRateDao;
+import com.vincode.flooringmastery.dao.interfaces.ProductDao;
+import com.vincode.flooringmastery.dao.interfaces.TaxRateDao;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.ProductTypeNotFoundException;
 import com.vincode.flooringmastery.exceptions.StateNotFoundException;
+import com.vincode.flooringmastery.service.interfaces.ValidationManagementService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 
-public class OrderValidationService {
+
+public class OrderValidationService implements ValidationManagementService {
     private final ProductDao productDao;
     private final TaxRateDao taxDao;
 
@@ -26,13 +27,13 @@ public class OrderValidationService {
         LocalDate orderLocalDate = LocalDate.parse(date, formatter);
         LocalDate today = LocalDate.now();
         if (orderLocalDate.isBefore(today)) {
-            throw new InvalidOrderException("Order date must be in the future: " + date);
+            throw new InvalidOrderException("--! Order date must be in the future: " + date);
         }
     }
 
     public void validateName(String name) throws InvalidOrderException {
-        if (!name.matches("^[a-zA-Z ]+$")) {
-            throw new InvalidOrderException("Customer name is invalid. Use upper or lower case letters. Space is also allowed.");
+        if (!name.matches("^[a-zA-Z0-9., ]+$")) {
+            throw new InvalidOrderException("--! Name can't be blank, limited to characters [a-z][0-9] as well as periods and comma characters.");
         }
     }
 
@@ -40,21 +41,22 @@ public class OrderValidationService {
         try {
             taxDao.getRate(state);
         } catch (StateNotFoundException e) {
-            throw new InvalidOrderException("State " + state + " is not supported.");
+            throw new InvalidOrderException("--! State " + state + " is not supported.");
         }
     }
 
     public void validateArea(BigDecimal area) throws InvalidOrderException {
         BigDecimal minArea = new BigDecimal("100");
         if (area.compareTo(minArea) < 0) {
-            throw new InvalidOrderException("Order area must be at least " + minArea + " square feet.");
+            throw new InvalidOrderException("--! Order area must be at least " + minArea + " square feet.");
         }
     }
 
     public void validateProductType(String productType) throws InvalidOrderException {
-        List<BigDecimal> costs = productDao.getProductCosts(productType);
-        if (costs == null) {
-            throw new ProductTypeNotFoundException("Product type not found. It might be available in the future!");
+        try{
+            productDao.getProductCosts(productType);
+        }catch (ProductTypeNotFoundException e){
+            throw new InvalidOrderException("--! Product type:  " + productType + " is not supported.");
         }
     }
 }

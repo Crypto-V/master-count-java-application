@@ -3,23 +3,22 @@ package com.vincode.flooringmastery.controller;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
 import com.vincode.flooringmastery.model.Order;
-import com.vincode.flooringmastery.service.OrderEstimationService;
-import com.vincode.flooringmastery.service.OrderService;
-import com.vincode.flooringmastery.service.OrderValidationService;
+import com.vincode.flooringmastery.service.interfaces.EstimationManagementService;
+import com.vincode.flooringmastery.service.interfaces.OrderManagementService;
+import com.vincode.flooringmastery.service.interfaces.ValidationManagementService;
 import com.vincode.flooringmastery.view.ConsoleOrderView;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 
 public class OrderController {
-    private final OrderService orderService;
+    private final OrderManagementService orderService;
     private final ConsoleOrderView view;
 
-    public OrderController(OrderValidationService validationService, OrderEstimationService estimationService, OrderService orderService, ConsoleOrderView view) {
-        this.validationService = validationService;
-        this.estimationService = estimationService;
+    public OrderController(ValidationManagementService validationService, EstimationManagementService estimationService, OrderManagementService orderService, ConsoleOrderView view) {
         this.orderService = orderService;
         this.view = view;
     }
@@ -37,8 +36,9 @@ public class OrderController {
                     case 1 -> displayOrdersByDate();
                     case 2 -> addOrder();
                     case 3 -> editOrder();
-                    case 4 -> System.out.println("Remove an order");
-                    case 5 -> keepGoing = false;
+                    case 4 -> removeOrder();
+                    case 5 -> export();
+                    case 6 -> keepGoing = false;
                     default -> System.out.println("Default message");
                 }
 
@@ -65,7 +65,7 @@ public class OrderController {
         }
     }
 
-    private void addOrder()  {
+    private void addOrder() {
         view.addOrderSectionBanner();
         String date = view.getOrderDate();
         String name = view.getCustomerName();
@@ -76,8 +76,8 @@ public class OrderController {
         try {
             Order order = orderService.createOrder(date, name, state, area, productType);
             simulateLoadingProcess();
-            System.out.println("Order Valid!!\n");
-            System.out.println("Estimating the cost");
+            System.out.println("--> Order Valid!!\n");
+            System.out.println("--> Estimating the cost");
             simulateLoadingProcess();
             view.displayPreOrderBanner(date, order);
             boolean confirmed = view.getUserConfirmation();
@@ -85,14 +85,14 @@ public class OrderController {
             if (confirmed) {
                 date = date.replaceAll("-", "");
                 orderService.addOrder(date, order);
-                System.out.println("Order Confirmed!!");
-                view.displayAddedOrder(order);
+                System.out.println("--> Order Confirmed!!");
+                view.displayOrder(order);
             } else {
                 view.printMenuAndGetSelection();
             }
         } catch (InvalidOrderException e) {
-            System.out.println("Invalid: " + e.getMessage());
-            System.out.println("!------Let's try again------!");
+            System.out.println("--! Invalid: " + e.getMessage());
+            System.out.println("<------Let's try again------>");
             addOrder();
         }
     }
@@ -107,7 +107,7 @@ public class OrderController {
         try {
             // Extracting the object
             Order tempOrder = orderService.getOrder(date, orderNumber);
-            view.displayOrderFound(tempOrder);
+            view.displayOrder(tempOrder);
 
             // Reading the new values
             String name = view.readCustomerName(tempOrder.getCustomerName());
@@ -116,38 +116,84 @@ public class OrderController {
             String productType = view.readProductType(tempOrder.getProductType());
 
             // Validate the order
-            orderService.validateOrder(name, state, area, productType);
+            try {
+                orderService.validateOrder(name, state, area, productType);
+            } catch (InvalidOrderException e) {
+                System.out.println("--! Invalid order: " + e.getMessage());
+                editOrder();
+            }
+            view.displayPreOrderBanner(date, tempOrder);
 
             boolean confirmed = view.getUserConfirmation();
             if (confirmed) {
-                simulateLoadingProcess();
                 // Update existing order and estimate
                 try {
                     Order reestimatedOrder = orderService.updateOrder(date, orderNumber, name, state, area, productType);
                     simulateLoadingProcess();
-                    System.out.println("Order Updated!!");
-                    view.displayOrderFound(reestimatedOrder);
+                    System.out.println(" -| Order Updated!! |- ");
+                    view.displayOrder(reestimatedOrder);
                 } catch (NoOrdersFoundException e) {
-                    System.out.println("No order found: " + e.getMessage());
+                    System.out.println("--! No order found: " + e.getMessage());
                 } catch (InvalidOrderException e) {
-                    System.out.println("Invalid order: " + e.getMessage());
+                    System.out.println("--! Invalid order: " + e.getMessage());
                 }
             } else {
-                view.printMenuAndGetSelection();
+                System.out.println("-| Order Canceled!! |-");
             }
         } catch (NoOrdersFoundException | InvalidOrderException e) {
-            System.out.println("Invalid: " + e.getMessage());
-            view.printMenuAndGetSelection();
+            System.out.println("--! Invalid: " + e.getMessage());
         }
+    }
+
+    private void removeOrder() {
+
+        view.displayRemoveOrderBanner();
+
+        // Reading values for extracting the object
+        int orderNumber = view.getOrderNumber();
+        String date = view.getOrderDate().replaceAll("-", "");
+
+        try {
+            // Extracting the object
+            Order tempOrder = orderService.getOrder(date, orderNumber);
+            view.displayOrder(tempOrder);
+
+            boolean confirmed = view.getUserConfirmationToDelete();
+            if (confirmed) {
+                // Removing order!
+                Order removedOrder = orderService.removeOrder(date, orderNumber);
+                view.displayOrder(removedOrder);
+                simulateLoadingProcess();
+                System.out.println(" -| Order Removed!! |- ");
+            } else {
+                System.out.println("-| Order was not removed!! |-");
+            }
+
+        } catch (NoOrdersFoundException | InvalidOrderException e) {
+            System.out.println("--! Invalid: " + e.getMessage());
+        }
+
+
+    }
+
+    private void export(){
+        view.displayExportBanner();
+        simulateLoadingProcess();
+        try {
+            orderService.exportAll(LocalDate.now());
+        } catch (IOException | InvalidOrderException e) {
+            System.out.println("--! Failed to export orders: " + e.getMessage());
+        }
+        view.displayExportFinished();
     }
 
     //This method will simulate the loading process to look more real.
     private void simulateLoadingProcess() {
-        System.out.println("Loading");
-        for (int i = 0; i < 4; i++) {
+        System.out.print("\nLoading");
+        for (int i = 0; i < 6; i++) {
             try {
-                Thread.sleep(400);
-                System.out.print(".");
+                Thread.sleep(500);
+                System.out.print(" #");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -155,27 +201,6 @@ public class OrderController {
         System.out.println();
     }
 
-
-//
-//    private void removeOrder() {
-//        LocalDate date = io.readDate("Enter the order date");
-//        int orderNumber = io.readInt("Enter the order number");
-//        Order order = orderService.getOrder(date, orderNumber);
-//
-//        if (order != null) {
-//            io.printOrder(order);
-//            boolean confirmation = io.readYesNo("Would you like to remove this order?");
-//            if (confirmation) {
-//                orderService.removeOrder(order);
-//                io.print("Order removed.");
-//            } else {
-//                io.print("Order not removed.");
-//            }
-//        } else {
-//            io.print("Order not found.");
-//        }
-//    }
-//}
 }
 
 

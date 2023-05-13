@@ -1,5 +1,6 @@
 package com.vincode.flooringmastery.dao;
 
+import com.vincode.flooringmastery.dao.interfaces.OrderDao;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
 import com.vincode.flooringmastery.model.Order;
@@ -15,8 +16,8 @@ import java.util.*;
 
 
 public class OrderDaoImpl implements OrderDao {
-    String ordersPath = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders";
     private final Map<String, OrderStamp> register;
+    String ordersPath = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders";
     private int latestOrderNumber = 0;
 
 
@@ -36,7 +37,7 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public Order addOrder(String date, Order order) throws InvalidOrderException {
+    public void addOrder(String date, Order order) throws InvalidOrderException {
 
         //Creating the file with the name following the conventions and assigning the desired path.
         String fileName = "Orders_" + date + ".txt";
@@ -53,7 +54,6 @@ public class OrderDaoImpl implements OrderDao {
         //Keeping track of the added file in the register for fast retrieval.
         registerOrder(date, order);
 
-        return order;
     }
 
     @Override
@@ -63,22 +63,16 @@ public class OrderDaoImpl implements OrderDao {
             Order order = os.getOrderDetail();
             if (order.getOrderNumber() == orderNumber) {
                 return order;
-            }else {
-                throw new NoOrdersFoundException("Order with this number: "+orderNumber+" was not found!");
+            } else {
+                throw new NoOrdersFoundException("Order with this number: " + orderNumber + " was not found!");
             }
-        }else{
-            throw new NoOrdersFoundException("Order with this date: "+date+" was not found!");
+        } else {
+            throw new NoOrdersFoundException("Order with this date: " + date + " was not found!");
         }
     }
 
     @Override
-    public Order updateOrder(
-            String date,
-            int orderNumber,
-            String name,
-            String state,
-            BigDecimal area,
-            String productType) throws NoOrdersFoundException, InvalidOrderException {
+    public Order updateOrder(String date, int orderNumber, String name, String state, BigDecimal area, String productType) throws NoOrdersFoundException, InvalidOrderException {
         OrderStamp os = register.get(date);
         if (os != null) {
             Order existingOrder = os.getOrderDetail();
@@ -104,17 +98,41 @@ public class OrderDaoImpl implements OrderDao {
         throw new NoOrdersFoundException("Order with this date and order number combination was not found!");
     }
 
-
     @Override
-    public Order removeTheOrder(String date, Long orderNumber) {
-        return null;
+    public Order removeOrder(String date, int orderNumber) throws NoOrdersFoundException {
+
+        if (!register.containsKey(date)) {
+            throw new NoOrdersFoundException("No order found for the given date: " + date);
+        }
+
+        OrderStamp os = register.get(date);
+        if (os.getOrderNumber() != orderNumber) {
+            throw new NoOrdersFoundException("Invalid order number: " + orderNumber);
+        }
+
+        register.remove(date);
+        removeOrderFromFile(date);
+
+        return os.getOrderDetail();
     }
 
     @Override
-    public void export() {
+    public void export(String date) {
+        String fileName = "DataExport" + date + ".txt";
+        String ORDER_DIR = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\backup\\";
+        Path filePath = Paths.get(ORDER_DIR + "/" + fileName);
 
+        try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(filePath))) {
+            writer.println("OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total");
+            for (OrderStamp os : register.values()) {
+                writer.println(os.getOrderDetail().toExportString());
+            }
+        }catch (IOException e){
+            System.out.println("\n!-- An error occurred while performing file operations. Check the path!");
+        }
     }
 
+    //Helping methods:
     //Creating a register for all files that will be added for easy access.
     private void registerOrder(String date, Order order) {
         OrderStamp stamp = new OrderStamp(date, order.getOrderNumber(), order);
@@ -126,8 +144,8 @@ public class OrderDaoImpl implements OrderDao {
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(filePath))) {
             writer.println("OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total");
             writer.println(
-                    order.getOrderNumber()+ "," +
-                    order.getCustomerName() + "," +
+                    order.getOrderNumber() + "," +
+                            order.getCustomerName() + "," +
                             order.getState() + "," +
                             order.getTaxRate() + "," +
                             order.getProductType() + "," +
@@ -139,7 +157,7 @@ public class OrderDaoImpl implements OrderDao {
                             order.getTax() + "," +
                             order.getTotal());
         } catch (IOException e) {
-            throw new InvalidOrderException("File not found! Can't write order to the file!"+filePath);
+            throw new InvalidOrderException("File not found! Can't write order to the file!" + filePath);
         }
     }
 
@@ -197,6 +215,22 @@ public class OrderDaoImpl implements OrderDao {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void removeOrderFromFile(String date) throws NoOrdersFoundException {
+        Path folderPath = Paths.get(ordersPath);
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folderPath)) {
+            for (Path filePath : directoryStream) {
+                String fileName = filePath.getFileName().toString();
+                String fileDate = fileName.substring(7, 15); // Adjust the substring range based on the actual file name format
+                if (fileDate.equals(date)) {
+                    Files.delete(filePath); // Delete the file
+                }
+            }
+        } catch (IOException e) {
+            // Handle any exceptions that occur during file retrieval
+            throw new NoOrdersFoundException("File was not found for that date" + date);
+        }
     }
 
 

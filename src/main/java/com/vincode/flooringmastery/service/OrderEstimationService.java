@@ -1,16 +1,17 @@
 package com.vincode.flooringmastery.service;
 
-import com.vincode.flooringmastery.dao.ProductDao;
-import com.vincode.flooringmastery.dao.TaxRateDao;
+import com.vincode.flooringmastery.dao.interfaces.ProductDao;
+import com.vincode.flooringmastery.dao.interfaces.TaxRateDao;
 import com.vincode.flooringmastery.exceptions.ProductTypeNotFoundException;
 import com.vincode.flooringmastery.exceptions.StateNotFoundException;
 import com.vincode.flooringmastery.model.Order;
+import com.vincode.flooringmastery.service.interfaces.EstimationManagementService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-public class OrderEstimationService {
+public class OrderEstimationService implements EstimationManagementService {
 
     private final ProductDao productDao;
     private final TaxRateDao taxDao;
