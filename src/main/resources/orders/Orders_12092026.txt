@@ -1,2 +1,2 @@
 OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
-4,GEORGE,TX,25.00,WOOD,100,1.75,2.10,1186.50,1423.80,652.5750,3262.8750
+8,WILLIAM,TX,4.45,TILE,145,3.50,4.15,507.50,601.75,44.3700,1153.6200

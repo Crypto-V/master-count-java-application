@@ -134,9 +134,13 @@ public class OrderDaoImpl implements OrderDao {
 
     //Helping methods:
     //Creating a register for all files that will be added for easy access.
-    private void registerOrder(String date, Order order) {
-        OrderStamp stamp = new OrderStamp(date, order.getOrderNumber(), order);
-        register.put(stamp.getDate(), stamp);
+    private void registerOrder(String date, Order order) throws InvalidOrderException {
+        if (!register.containsKey(date)) {
+            OrderStamp stamp = new OrderStamp(date, order.getOrderNumber(), order);
+            register.put(stamp.getDate(), stamp);
+        } else {
+            throw new InvalidOrderException("We are fully booked for this dates:  \n" + register.keySet()+"\n Try selecting another date!");
+        }
     }
 
     private void writeOrderToFile(Order order, Path filePath) throws InvalidOrderException {

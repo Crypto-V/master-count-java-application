@@ -39,7 +39,7 @@ public class OrderController {
                     case 4 -> removeOrder();
                     case 5 -> export();
                     case 6 -> keepGoing = false;
-                    default -> System.out.println("Default message");
+                    default -> System.out.println("Hope you love it!");
                 }
 
             }
