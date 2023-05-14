@@ -2,7 +2,6 @@ package com.vincode.flooringmastery.dao.interfaces;
 
 import com.vincode.flooringmastery.dao.ProductDaoImpl;
 import com.vincode.flooringmastery.exceptions.ProductTypeNotFoundException;
-import com.vincode.flooringmastery.model.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ProductDaoTest {
 
@@ -25,7 +24,7 @@ class ProductDaoTest {
 
 
     @Test
-    @DisplayName("Test to get the product cost carpet")
+    @DisplayName("test to get the product cost carpet")
     void testToGetTheProductCostCarpet() {
 
         // ARRANGE
@@ -44,7 +43,7 @@ class ProductDaoTest {
     }
 
     @Test
-    @DisplayName("Test to get the product cost laminate")
+    @DisplayName("test to get the product cost laminate")
     void testToGetTheProductCostLaminate() {
 
         // ARRANGE
@@ -63,7 +62,7 @@ class ProductDaoTest {
     }
 
     @Test
-    @DisplayName("Test to get the product cost tile")
+    @DisplayName("test to get the product cost tile")
     void testToGetTheProductCostTile() {
 
         // ARRANGE
@@ -82,7 +81,7 @@ class ProductDaoTest {
     }
 
     @Test
-    @DisplayName("Test to get the product cost wood")
+    @DisplayName("test to get the product cost wood")
     void testToGetTheProductCostWood() {
 
         // ARRANGE
@@ -102,7 +101,7 @@ class ProductDaoTest {
 
 
     @Test
-    @DisplayName("Testing the wrong product type for exception ")
+    @DisplayName("testing the wrong product type for exception ")
     void testingTheWrongProductTypeForException() {
 
         // ARRANGE

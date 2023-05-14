@@ -104,7 +104,8 @@ public class MockOrderDaoImpl implements OrderDao {
     @Override
     public void export(String date) {
         String fileName = "DataExport" + date + ".txt";
-        String ORDER_DIR = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\backup\\";
+        //For the test I created extra backup folder
+        String ORDER_DIR = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\test\\resources\\backup";
         Path filePath = Paths.get(ORDER_DIR + "/" + fileName);
 
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(filePath))) {

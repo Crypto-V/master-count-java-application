@@ -1,0 +1,2 @@
+OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total
+9,STEVEN JHNOSON,TX,4.45,WOOD,450,5.15,4.75,2317.50,2137.50,178.2000,4633.2000

@@ -7,8 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OrderDaoImplTest {
 
@@ -61,12 +65,12 @@ public class OrderDaoImplTest {
         Assertions.assertEquals(order.getLaborCost(), addedOrder.getLaborCost());
         Assertions.assertEquals(order.getTax(), addedOrder.getTax());
         Assertions.assertEquals(order.getTotal(), addedOrder.getTotal());
-        
+
     }
-    
+
 
     @Test
-    @DisplayName("Test get order by date and order number")
+    @DisplayName("test get order by date and order number")
     void testGetOrderByDateAndOrderNumber() throws InvalidOrderException {
 
         // ARRANGE
@@ -83,7 +87,7 @@ public class OrderDaoImplTest {
     }
 
     @Test
-    @DisplayName("Test update order with prefilled values")
+    @DisplayName("test update order with prefilled values")
     void testUpdateOrderWithPrefilledValues() throws InvalidOrderException {
 
         // ARRANGE
@@ -122,7 +126,7 @@ public class OrderDaoImplTest {
 
 
     @Test
-    @DisplayName("Test remove order")
+    @DisplayName("test remove order")
     void testRemoveOrder() throws InvalidOrderException {
         // ARRANGE
         String date = "13052024";
@@ -143,9 +147,49 @@ public class OrderDaoImplTest {
 
         // Verify that the order no longer exists
         List<Order> orders = orderDao.getOrdersByDate(date);
-        Assertions.assertTrue(orders.isEmpty());
+        assertTrue(orders.isEmpty());
     }
 
+
+    @Test
+    @DisplayName("test export feature to see if the file was created in the backup folder")
+    void testExportFeature() throws IOException, InvalidOrderException {
+
+        //Will use the real dao implementation to check if the file will be exported, so will check if there
+        // is a file with the given name.
+
+        // ARRANGE
+        String date = "12032025";
+
+        //Adding an order to have what to write in the file except the headings.
+        Order order = new Order();
+        order.setCustomerName("Vasile Verejan");
+        order.setState("TX");
+        order.setTaxRate(new BigDecimal("4.45"));
+        order.setProductType("WOOD");
+        order.setArea(new BigDecimal("450"));
+        order.setCostPerSquareFoot(new BigDecimal("5.15"));
+        order.setLaborCostPerSquareFoot(new BigDecimal("4.75"));
+        order.setMaterialCost(new BigDecimal("2317.50"));
+        order.setLaborCost(new BigDecimal("2137.50"));
+        order.setTax(new BigDecimal("178.2000"));
+        order.setTotal(new BigDecimal("4633.2000"));
+
+        orderDao.addOrder("13052024", order);
+
+        // Set up expected file name and content
+        String expectedFileName = "DataExport" + date + ".txt";
+
+        // ACT
+
+        orderDao.export(date);
+
+        // ASSERT
+        String expectedFilePath = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\test\\resources\\backup/" + expectedFileName;
+        File exportedFile = new File(expectedFilePath);
+        assertTrue(exportedFile.exists());
+
+    }
 
 
 }

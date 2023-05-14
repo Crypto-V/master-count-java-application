@@ -16,10 +16,14 @@ import com.vincode.flooringmastery.service.interfaces.ValidationService;
 import com.vincode.flooringmastery.ui.UserIO;
 import com.vincode.flooringmastery.ui.UserIOConsoleImpl;
 import com.vincode.flooringmastery.view.ConsoleOrderView;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
 public class FlooringMasteryApplication {
 
 	public static void main(String[] args)   {
+		SpringApplication.run(FlooringMasteryApplication.class, args);
 
 		UserIO io = new UserIOConsoleImpl();
 		ProductDao productDao = new ProductDaoImpl();

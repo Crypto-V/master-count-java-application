@@ -68,7 +68,7 @@ public class OrderServiceImpl implements com.vincode.flooringmastery.service.int
     }
 
     public void exportAll(LocalDate now) throws IOException, InvalidOrderException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMddyyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         String formattedDate = now.format(formatter);
         orderDao.export(formattedDate);
     }

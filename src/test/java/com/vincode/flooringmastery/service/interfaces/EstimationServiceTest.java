@@ -45,7 +45,7 @@ class EstimationServiceTest {
     }
 
     @Test
-    @DisplayName("Test if estimation service instance returns correct value")
+    @DisplayName("test if estimation service instance returns correct value")
     void testIfEstimationServiceInstanceReturnsCorrectValue() throws InvalidOrderException {
 
         // ARRANGE
@@ -71,7 +71,7 @@ class EstimationServiceTest {
     }
 
     @Test
-    @DisplayName("Test calculate estimates throws state not found exception")
+    @DisplayName("test calculate estimates throws state not found exception")
     void testCalculateEstimatesThrowsStateNotFoundException() {
 
         // ARRANGE mock behavior
@@ -89,7 +89,7 @@ class EstimationServiceTest {
     }
 
     @Test
-    @DisplayName("Test calculate estimates throws product type not found exception")
+    @DisplayName("test calculate estimates throws product type not found exception")
     void testCalculateEstimatesThrowsProductTypeNotFoundException() {
 
         // ARRANGE mock behavior

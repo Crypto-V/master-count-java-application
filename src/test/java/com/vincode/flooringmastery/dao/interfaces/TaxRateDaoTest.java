@@ -1,7 +1,6 @@
 package com.vincode.flooringmastery.dao.interfaces;
 
 import com.vincode.flooringmastery.dao.TaxRateDaoImpl;
-import com.vincode.flooringmastery.exceptions.ProductTypeNotFoundException;
 import com.vincode.flooringmastery.exceptions.StateNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TaxRateDaoTest {
     TaxRateDao taxRateDao;
@@ -22,7 +21,7 @@ class TaxRateDaoTest {
 
 
     @Test
-    @DisplayName("Test geting the tax rate for a state")
+    @DisplayName("test geting the tax rate for a state")
     void testGetingTheTaxRateForAState() {
 
         // ARRANGE
@@ -39,7 +38,7 @@ class TaxRateDaoTest {
 
 
     @Test
-    @DisplayName("Test with wrong value throws exception")
+    @DisplayName("test with wrong value throws exception")
     void testWithWrongValueThrowsException() {
 
         // ARRANGE
