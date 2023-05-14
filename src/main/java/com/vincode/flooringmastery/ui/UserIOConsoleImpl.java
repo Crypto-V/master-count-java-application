@@ -34,6 +34,7 @@ public class UserIOConsoleImpl implements UserIO {
                 return readDate(msgPrompt);
             }
         }
+
     }
 
     public String formatDate(LocalDate date) {

@@ -2,26 +2,27 @@ package com.vincode.flooringmastery.service;
 
 import com.vincode.flooringmastery.dao.interfaces.ProductDao;
 import com.vincode.flooringmastery.dao.interfaces.TaxRateDao;
+import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.ProductTypeNotFoundException;
 import com.vincode.flooringmastery.exceptions.StateNotFoundException;
 import com.vincode.flooringmastery.model.Order;
-import com.vincode.flooringmastery.service.interfaces.EstimationManagementService;
+import com.vincode.flooringmastery.service.interfaces.EstimationService;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-public class OrderEstimationService implements EstimationManagementService {
+public class EstimationServiceImpl implements EstimationService {
 
     private final ProductDao productDao;
     private final TaxRateDao taxDao;
 
-    public OrderEstimationService(ProductDao productDao, TaxRateDao taxDao) {
+    public EstimationServiceImpl(ProductDao productDao, TaxRateDao taxDao) {
         this.productDao = productDao;
         this.taxDao = taxDao;
     }
 
-    public Order calculateEstimates(String name, String state, BigDecimal area, String productType) {
+    public Order calculateEstimates(String name, String state, BigDecimal area, String productType) throws InvalidOrderException {
         try {
             Order order = new Order();
             List<BigDecimal> productCosts = productDao.getProductCosts(productType);
@@ -45,8 +46,7 @@ public class OrderEstimationService implements EstimationManagementService {
 
             return order;
         } catch (StateNotFoundException | ProductTypeNotFoundException e) {
-            System.out.println(e.getMessage());
-            return null;
+            throw new InvalidOrderException(e.getMessage());
         }
     }
 

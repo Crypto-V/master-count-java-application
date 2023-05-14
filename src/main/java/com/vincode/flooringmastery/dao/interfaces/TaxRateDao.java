@@ -4,5 +4,5 @@ import java.math.BigDecimal;
 
 public interface TaxRateDao extends Reader {
 
-    BigDecimal getRate(String stateAbbreviation);
+    BigDecimal getRate(String stateAbbreviation) ;
 }

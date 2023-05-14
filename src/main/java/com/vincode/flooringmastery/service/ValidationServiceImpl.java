@@ -5,18 +5,18 @@ import com.vincode.flooringmastery.dao.interfaces.TaxRateDao;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.ProductTypeNotFoundException;
 import com.vincode.flooringmastery.exceptions.StateNotFoundException;
-import com.vincode.flooringmastery.service.interfaces.ValidationManagementService;
+import com.vincode.flooringmastery.service.interfaces.ValidationService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 
-public class OrderValidationService implements ValidationManagementService {
+public class ValidationServiceImpl implements ValidationService {
     private final ProductDao productDao;
     private final TaxRateDao taxDao;
 
-    public OrderValidationService(ProductDao productDao, TaxRateDao taxDao) {
+    public ValidationServiceImpl(ProductDao productDao, TaxRateDao taxDao) {
         this.productDao = productDao;
         this.taxDao = taxDao;
     }

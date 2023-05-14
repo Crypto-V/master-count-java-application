@@ -5,7 +5,7 @@ import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import java.math.BigDecimal;
 
 
-public interface ValidationManagementService {
+public interface ValidationService {
 
     void validateDate(String date) throws InvalidOrderException;
 

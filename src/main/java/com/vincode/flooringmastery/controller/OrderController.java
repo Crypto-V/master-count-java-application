@@ -3,11 +3,8 @@ package com.vincode.flooringmastery.controller;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
 import com.vincode.flooringmastery.model.Order;
-import com.vincode.flooringmastery.service.interfaces.EstimationManagementService;
-import com.vincode.flooringmastery.service.interfaces.OrderManagementService;
-import com.vincode.flooringmastery.service.interfaces.ValidationManagementService;
+import com.vincode.flooringmastery.service.interfaces.OrderService;
 import com.vincode.flooringmastery.view.ConsoleOrderView;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,15 +12,15 @@ import java.util.List;
 
 
 public class OrderController {
-    private final OrderManagementService orderService;
+    private final OrderService orderService;
     private final ConsoleOrderView view;
 
-    public OrderController(ValidationManagementService validationService, EstimationManagementService estimationService, OrderManagementService orderService, ConsoleOrderView view) {
+    public OrderController(OrderService orderService, ConsoleOrderView view) {
         this.orderService = orderService;
         this.view = view;
     }
 
-    public void run() throws IOException {
+    public void run() {
         boolean keepGoing = true;
         int menuSelection = 0;
 
@@ -40,6 +37,7 @@ public class OrderController {
                     case 5 -> export();
                     case 6 -> keepGoing = false;
                     default -> System.out.println("Hope you love it!");
+
                 }
 
             }
@@ -88,11 +86,12 @@ public class OrderController {
                 System.out.println("--> Order Confirmed!!");
                 view.displayOrder(order);
             } else {
+                System.out.println("-| Order Canceled!! |-");
                 view.printMenuAndGetSelection();
             }
         } catch (InvalidOrderException e) {
             System.out.println("--! Invalid: " + e.getMessage());
-            System.out.println("<------Let's try again------>");
+            System.out.println("\n<------Let's try again------>");
             addOrder();
         }
     }
@@ -187,7 +186,6 @@ public class OrderController {
         view.displayExportFinished();
     }
 
-    //This method will simulate the loading process to look more real.
     private void simulateLoadingProcess() {
         System.out.print("\nLoading");
         for (int i = 0; i < 6; i++) {

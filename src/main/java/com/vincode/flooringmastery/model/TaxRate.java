@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class TaxRate {
 
-    private String productType;
-    private BigDecimal costPerSquareFoot;
-    private BigDecimal laborCostPerSquareFoot;
+    private String state;
+    private String stateName;
+    private BigDecimal taxRate;
 }

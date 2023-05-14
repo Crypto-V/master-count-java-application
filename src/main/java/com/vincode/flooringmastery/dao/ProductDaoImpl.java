@@ -42,7 +42,7 @@ public class ProductDaoImpl implements ProductDao {
     public List<BigDecimal> getProductCosts(String productType) {
         List<BigDecimal> tempList = productMap.get(productType.toUpperCase());
         if (tempList == null || tempList.isEmpty()) {
-            throw new ProductTypeNotFoundException("No orders found for product type: " + productType);
+            throw new ProductTypeNotFoundException("Product type: " + productType+" was not found!");
         }
 
         return tempList;

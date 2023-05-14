@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface OrderManagementService {
+public interface OrderService {
 
     List<Order> getOrdersByDate(String date);
 

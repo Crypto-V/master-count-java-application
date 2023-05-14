@@ -1,13 +1,12 @@
 package com.vincode.flooringmastery.dao.interfaces;
 
-import com.vincode.flooringmastery.dao.OrderDaoImpl;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
-import com.vincode.flooringmastery.dao.interfaces.MockOrderDaoImpl;
 import com.vincode.flooringmastery.model.Order;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -83,7 +82,6 @@ public class OrderDaoImplTest {
         Assertions.assertEquals(1, order.getOrderNumber());
     }
 
-
     @Test
     @DisplayName("Test update order with prefilled values")
     void testUpdateOrderWithPrefilledValues() throws InvalidOrderException {
@@ -121,8 +119,6 @@ public class OrderDaoImplTest {
         // Based on the requirements date and order Number don't have to change, lets check.
         Assertions.assertEquals(1, retrievedOrder.getOrderNumber());
     }
-
-
 
 
     @Test

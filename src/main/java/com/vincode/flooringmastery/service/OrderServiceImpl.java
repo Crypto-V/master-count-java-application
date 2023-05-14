@@ -4,9 +4,8 @@ import com.vincode.flooringmastery.dao.interfaces.OrderDao;
 import com.vincode.flooringmastery.exceptions.InvalidOrderException;
 import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
 import com.vincode.flooringmastery.model.Order;
-import com.vincode.flooringmastery.service.interfaces.EstimationManagementService;
-import com.vincode.flooringmastery.service.interfaces.OrderManagementService;
-import com.vincode.flooringmastery.service.interfaces.ValidationManagementService;
+import com.vincode.flooringmastery.service.interfaces.EstimationService;
+import com.vincode.flooringmastery.service.interfaces.ValidationService;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -14,12 +13,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class OrderService implements OrderManagementService {
+public class OrderServiceImpl implements com.vincode.flooringmastery.service.interfaces.OrderService {
     private final OrderDao orderDao;
-    private final ValidationManagementService validationService;
-    private final EstimationManagementService estimationService;
+    private final ValidationService validationService;
+    private final EstimationService estimationService;
 
-    public OrderService(OrderDao orderDao, ValidationManagementService orderValidationService, EstimationManagementService orderEstimationService) {
+    public OrderServiceImpl(OrderDao orderDao, ValidationService orderValidationService, EstimationService orderEstimationService) {
         this.orderDao = orderDao;
         this.validationService = orderValidationService;
         this.estimationService = orderEstimationService;

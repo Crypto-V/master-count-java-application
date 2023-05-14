@@ -5,11 +5,9 @@ import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
 import com.vincode.flooringmastery.model.Order;
 import com.vincode.flooringmastery.model.OrderStamp;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +19,6 @@ import java.util.Map;
 public class MockOrderDaoImpl implements OrderDao {
 
     private final Map<String, OrderStamp> mockRegister;
-    String ordersPath = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders";
     private int latestOrderNumber = 0;
 
     public MockOrderDaoImpl(String orderDirectory) {
