@@ -132,8 +132,19 @@ public class OrderDaoImpl implements OrderDao {
         }
     }
 
-    //Helping methods:
-    //Creating a register for all files that will be added for easy access.
+    //Helping methods.
+
+    /**
+     * Registers an order for easy access.
+     * This method creates a register for all files by associating a date with an order.
+     * A new entry is created with the date, order number, and order object each time user adds an order.
+     * If the date already exists in the register, an InvalidOrderException
+     * is thrown with a message indicating that the date is already fully booked.
+     *
+     * @param date the date associated with the order
+     * @param order the order to be registered
+     * @throws InvalidOrderException if the date is already registered in the order register
+     */
     private void registerOrder(String date, Order order) throws InvalidOrderException {
         if (!register.containsKey(date)) {
             OrderStamp stamp = new OrderStamp(date, order.getOrderNumber(), order);
@@ -143,6 +154,16 @@ public class OrderDaoImpl implements OrderDao {
         }
     }
 
+
+    /**
+     * Writes an order to a file.
+     * This method writes the provided order details to the specified file path.
+     * All data are written as a single line in the file.
+     *
+     * @param order the order to be written to the file
+     * @param filePath the path of the file to write the order to
+     * @throws InvalidOrderException if the file is not found or there is an IOException while writing to the file.
+     */
     private void writeOrderToFile(Order order, Path filePath) throws InvalidOrderException {
 
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(filePath))) {
@@ -165,8 +186,16 @@ public class OrderDaoImpl implements OrderDao {
         }
     }
 
-    //When the instance will be created will automatically call this method to populate the register with the
-    // reference to the orders.
+
+    /**
+     * Reads files from a folder and populates the register with order references.
+     * This method reads all files from the specified folder path and populates the register
+     * with references to the orders found in those files.
+     * The method also keeps track of the latest order number encountered.
+     * This method is run when the new instance of this class is created to make sure when the user
+     * will perform operations on the register it will be preloaded with all existing orders.
+     *
+     */
     private void readFolderFiles() {
         Path folderPath = Paths.get(ordersPath);
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folderPath)) {
@@ -190,7 +219,15 @@ public class OrderDaoImpl implements OrderDao {
         }
     }
 
-    //This method will unpack the order object from the file
+
+    /**
+     * Reads an Order object from a file.
+     * This method reads the contents of the specified file and unpacks the order object
+     * stored in the file.
+     *
+     * @param filePath the path of the file to read the order from
+     * @return the Order object read from the file, or null if the file is empty or cannot be parsed
+     */
     private Order readOrderFromFile(Path filePath) {
         try (BufferedReader reader = Files.newBufferedReader(filePath)) {
             reader.readLine(); // Skip the header line
@@ -216,11 +253,19 @@ public class OrderDaoImpl implements OrderDao {
                 return order;
             }
         } catch (IOException | NumberFormatException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return null;
     }
 
+
+    /**
+     * Removes order files for a given date.
+     * This method deletes the order files associated with the specified date.
+     *
+     * @param date the date for which order files should be removed
+     * @throws NoOrdersFoundException if no order files are found for the given date
+     */
     private void removeOrderFromFile(String date) throws NoOrdersFoundException {
         Path folderPath = Paths.get(ordersPath);
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(folderPath)) {
@@ -228,7 +273,9 @@ public class OrderDaoImpl implements OrderDao {
                 String fileName = filePath.getFileName().toString();
                 String fileDate = fileName.substring(7, 15); // Adjust the substring range based on the actual file name format
                 if (fileDate.equals(date)) {
-                    Files.delete(filePath); // Delete the file
+                    //If the date extracted from the file name matching the
+                    //date that was passed it we simply remove the file.
+                    Files.delete(filePath);
                 }
             }
         } catch (IOException e) {

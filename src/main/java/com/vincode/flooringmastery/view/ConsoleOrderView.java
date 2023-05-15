@@ -16,7 +16,8 @@ public class ConsoleOrderView {
     }
 
     public int printMenuAndGetSelection() {
-        io.print("\n << Flooring Program >>    ");
+        io.print("----------------------------");
+        io.print("|*   Flooring Program     *|");
         io.print("----------------------------");
         io.print("| 1. Display Orders        |");
         io.print("| 2. Add an Order          |");
@@ -64,7 +65,9 @@ public class ConsoleOrderView {
 
     //Display orders section
     public void displayAllOrdersSectionBanner() {
-        io.print(" << Display Orders >> ");
+        io.print("----------------------");
+        io.print("|   Display Orders   | ");
+        io.print("----------------------");
     }
 
     public String getUserRequestedDate() {
@@ -85,7 +88,9 @@ public class ConsoleOrderView {
 
     //Add order section
     public void addOrderSectionBanner() {
-        io.print(" << Add order >> ");
+        io.print("----------------------");
+        io.print("|     Add Order      | ");
+        io.print("----------------------");
     }
 
     public void displayPreOrderBanner(String date, Order order) {
@@ -107,7 +112,9 @@ public class ConsoleOrderView {
 
     //Edit order section
     public void displayEditSectionBanner() {
-        System.out.println(" << Edit Order >> ");
+        io.print("----------------------");
+        io.print("|     Edit Order     | ");
+        io.print("----------------------");
     }
 
     public int getOrderNumber() {
@@ -151,7 +158,9 @@ public class ConsoleOrderView {
 
     //Delete section
     public void displayRemoveOrderBanner() {
-        io.print(" << Remove Order >> ");
+        io.print("----------------------");
+        io.print("|     Remove Order   | ");
+        io.print("----------------------");
     }
 
     public boolean getUserConfirmationToDelete() {
@@ -161,7 +170,9 @@ public class ConsoleOrderView {
 
     //Export Section
     public void displayExportBanner() {
-        io.print(" << Exporting all Data >> ");
+        io.print("----------------------");
+        io.print("|  Export all data   | ");
+        io.print("----------------------");
     }
 
     public void displayExportFinished() {

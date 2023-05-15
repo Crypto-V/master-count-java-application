@@ -22,6 +22,7 @@ public class ValidationServiceImpl implements ValidationService {
     }
 
     // Validating the business requirement for the order date to be in the future.
+    @Override
     public void validateDate(String date) throws InvalidOrderException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
         LocalDate orderLocalDate = LocalDate.parse(date, formatter);
@@ -31,12 +32,14 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    @Override
     public void validateName(String name) throws InvalidOrderException {
         if (!name.matches("^[a-zA-Z0-9., ]+$")) {
             throw new InvalidOrderException("--! Name can't be blank, limited to characters [a-z][0-9] as well as periods and comma characters.");
         }
     }
 
+    @Override
     public void validateState(String state) throws InvalidOrderException {
         try {
             taxDao.getRate(state);
@@ -45,13 +48,16 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    @Override
     public void validateArea(BigDecimal area) throws InvalidOrderException {
         BigDecimal minArea = new BigDecimal("100");
+        //Area should be greater or equal to min area defined.
         if (area.compareTo(minArea) < 0) {
             throw new InvalidOrderException("--! Order area must be at least " + minArea + " square feet.");
         }
     }
 
+    @Override
     public void validateProductType(String productType) throws InvalidOrderException {
         try{
             productDao.getProductCosts(productType);
