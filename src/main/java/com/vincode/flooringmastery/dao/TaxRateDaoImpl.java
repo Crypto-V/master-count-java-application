@@ -14,7 +14,7 @@ public class TaxRateDaoImpl implements TaxRateDao {
 
     public TaxRateDaoImpl() {
         //Method will be called automatically which will load the data in the map.
-        String PATH = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\data\\Taxes.txt";
+        String PATH = "src/main/resources/data/Taxes.txt";
         readFile(PATH);
     }
 

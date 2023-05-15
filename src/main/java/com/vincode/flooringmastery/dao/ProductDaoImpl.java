@@ -13,7 +13,7 @@ public class ProductDaoImpl implements ProductDao {
 
     public ProductDaoImpl() {
         //Method will be called automatically which will load the data in the map.
-        String PATH = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\data\\Products.txt";
+        String PATH = "src/main/resources/data/Products.txt";
         readFile(PATH);
     }
 

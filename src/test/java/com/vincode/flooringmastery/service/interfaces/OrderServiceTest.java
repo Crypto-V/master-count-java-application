@@ -149,7 +149,7 @@ class OrderServiceTest {
         // ARRANGE
         LocalDate date = LocalDate.parse("2029-05-10");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-        String formattedDate = date.format(formatter);
+        String formattedDate = date.format(formatter).replaceAll("-","");
 
         OrderDao orderDao = mock(OrderDao.class);
         OrderService orderService = new OrderServiceImpl(orderDao, validationService, estimationService);

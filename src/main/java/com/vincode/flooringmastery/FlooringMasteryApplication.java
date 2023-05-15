@@ -24,7 +24,6 @@ public class FlooringMasteryApplication {
 
 	public static void main(String[] args)   {
 		SpringApplication.run(FlooringMasteryApplication.class, args);
-
 		UserIO io = new UserIOConsoleImpl();
 		ProductDao productDao = new ProductDaoImpl();
 		TaxRateDao taxRateDao = new TaxRateDaoImpl();

@@ -6,18 +6,23 @@ import com.vincode.flooringmastery.exceptions.NoOrdersFoundException;
 import com.vincode.flooringmastery.model.Order;
 import com.vincode.flooringmastery.model.OrderStamp;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class OrderDaoImpl implements OrderDao {
     private final Map<String, OrderStamp> register;
-    String ordersPath = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders";
+    String ordersPath = "src/main/resources/orders";
     private int latestOrderNumber = 0;
 
 
@@ -28,12 +33,10 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public List<Order> getOrdersByDate(String date) {
-        OrderStamp orderStamp = register.get(date);
-        if (orderStamp != null && orderStamp.getOrderDetail() != null) {
-            return Collections.singletonList(orderStamp.getOrderDetail());
-        } else {
-            return Collections.emptyList();
-        }
+        return register.values().stream()
+                .filter(os -> os.getDate().equals(date))
+                .map(OrderStamp::getOrderDetail)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -41,7 +44,7 @@ public class OrderDaoImpl implements OrderDao {
 
         //Creating the file with the name following the conventions and assigning the desired path.
         String fileName = "Orders_" + date + ".txt";
-        String ORDER_DIR = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders\\";
+        String ORDER_DIR = "src/main/resources/orders";
         Path filePath = Paths.get(ORDER_DIR + "/" + fileName);
 
         //Setting the order number to be the next number;
@@ -83,7 +86,7 @@ public class OrderDaoImpl implements OrderDao {
                 existingOrder.setProductType(productType);
 
                 String fileName = "Orders_" + date + ".txt";
-                String ORDER_DIR = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\orders\\";
+                String ORDER_DIR = "src/main/resources/orders";
                 Path filePath = Paths.get(ORDER_DIR + "/" + fileName);
 
                 try {
@@ -119,7 +122,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public void export(String date) {
         String fileName = "DataExport" + date + ".txt";
-        String ORDER_DIR = "C:\\Users\\verej\\OneDrive\\Documents\\repos\\flooring-mastery\\src\\main\\resources\\backup\\";
+        String ORDER_DIR = "src/main/resources/backup/";
         Path filePath = Paths.get(ORDER_DIR + "/" + fileName);
 
         try (PrintWriter writer = new PrintWriter(Files.newBufferedWriter(filePath))) {
